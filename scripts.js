@@ -15,7 +15,6 @@ document.querySelectorAll(".nav-link").forEach((link) => {
   })
 })
 
-// Gallery Tab Functionality
 const tabButtons = document.querySelectorAll(".tab-btn")
 const galleryTabs = document.querySelectorAll(".gallery-tab")
 
@@ -25,11 +24,80 @@ tabButtons.forEach((button) => {
 
     // Remove active class from all buttons and tabs
     tabButtons.forEach((btn) => btn.classList.remove("active"))
-    galleryTabs.forEach((tab) => tab.classList.remove("active"))
+    galleryTabs.forEach((tab) => {
+      tab.classList.remove("active")
+      tab.style.opacity = "0"
+    })
 
-    // Add active class to clicked button and corresponding tab
+    // Add active class to clicked button
     button.classList.add("active")
-    document.getElementById(targetTab).classList.add("active")
+
+    // Add active class to corresponding tab with fade-in effect
+    setTimeout(() => {
+      const targetTabElement = document.getElementById(targetTab)
+      targetTabElement.classList.add("active")
+      targetTabElement.style.opacity = "1"
+    }, 150)
+  })
+})
+
+document.addEventListener("DOMContentLoaded", () => {
+  galleryTabs.forEach((tab, index) => {
+    if (index === 0) {
+      tab.style.opacity = "1"
+    } else {
+      tab.style.opacity = "0"
+    }
+  })
+})
+
+document.querySelectorAll(".gallery-item").forEach((item) => {
+  item.addEventListener("click", () => {
+    const img = item.querySelector("img")
+    const overlay = item.querySelector(".gallery-overlay")
+    const title = overlay.querySelector("h4").textContent
+    const description = overlay.querySelector("p").textContent
+
+    // Create a simple modal/lightbox effect
+    const modal = document.createElement("div")
+    modal.className = "gallery-modal"
+    modal.innerHTML = `
+      <div class="modal-backdrop">
+        <div class="modal-content">
+          <button class="modal-close">&times;</button>
+          <img src="${img.src}" alt="${img.alt}">
+          <div class="modal-info">
+            <h3>${title}</h3>
+            <p>${description}</p>
+          </div>
+        </div>
+      </div>
+    `
+
+    document.body.appendChild(modal)
+    document.body.style.overflow = "hidden"
+
+    // Close modal functionality
+    const closeModal = () => {
+      document.body.removeChild(modal)
+      document.body.style.overflow = "auto"
+    }
+
+    modal.querySelector(".modal-close").addEventListener("click", closeModal)
+    modal.querySelector(".modal-backdrop").addEventListener("click", (e) => {
+      if (e.target === modal.querySelector(".modal-backdrop")) {
+        closeModal()
+      }
+    })
+
+    // Close on escape key
+    const handleEscape = (e) => {
+      if (e.key === "Escape") {
+        closeModal()
+        document.removeEventListener("keydown", handleEscape)
+      }
+    }
+    document.addEventListener("keydown", handleEscape)
   })
 })
 
