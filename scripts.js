@@ -206,11 +206,34 @@ document.querySelectorAll(".cta-buttons .btn").forEach((button) => {
   })
 })
 
-// Add loading animation for images
+// Add loading animation for images - IMPROVED VERSION
 document.querySelectorAll("img").forEach((img) => {
-  img.addEventListener("load", () => {
+  // Skip hero background image from loading animation
+  if (img.classList.contains('hero-bg-image')) {
     img.style.opacity = "1"
-  })
+    return
+  }
+  
+  // Skip gallery images from loading animation to prevent loading issues
+  if (img.closest('.gallery-item')) {
+    img.style.opacity = "1"
+    return
+  }
+  
+  // Only apply loading animation to other images
+  if (img.complete && img.naturalHeight !== 0) {
+    img.style.opacity = "1"
+  } else {
+    img.addEventListener("load", () => {
+      img.style.opacity = "1"
+    })
+    
+    // Add error handling
+    img.addEventListener("error", () => {
+      console.warn(`Failed to load image: ${img.src}`)
+      img.style.opacity = "1" // Show broken image icon
+    })
+  }
 
   img.style.opacity = "0"
   img.style.transition = "opacity 0.3s ease"
